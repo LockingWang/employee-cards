@@ -19,9 +19,6 @@
               class="w-20 h-20 rounded-full object-cover border-4 border-pink-200 shadow-md group-hover:animate-bounce cursor-pointer"
               @click.stop="showDetailCard"
             />
-            <div class="absolute -top-1 -right-1 w-6 h-6 bg-pink-400 rounded-full flex items-center justify-center">
-              <span class="text-white text-xs">💖</span>
-            </div>
           </div>
           
           <!-- 姓名和職稱 -->
@@ -34,9 +31,10 @@
           </p>
           
           <!-- 展開按鈕 -->
-          <button class="w-full mx-2 bg-gradient-to-r from-pink-300 via-pink-400 to-purple-400 hover:from-pink-400 hover:via-pink-500 hover:to-purple-500 text-white px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2 relative overflow-hidden group animate-float">
+          <button class="w-4/5 mx-2 yellow-gradient-button text-white px-6 py-5 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl flex items-center justify-center relative overflow-hidden group"
+          :style="{ padding: '10px 0px' }">
             <!-- 可愛的裝飾背景 -->
-            <div class="absolute inset-0 bg-gradient-to-r from-pink-200/30 to-purple-200/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-yellow-200/30 to-orange-200/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <!-- 閃爍的星星裝飾 -->
             <div class="absolute top-1 left-3 w-1.5 h-1.5 bg-white/50 rounded-full animate-sparkle"></div>
@@ -49,10 +47,10 @@
             <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white/30 rounded-full animate-pulse delay-150"></div>
             
             <!-- 按鈕內容 -->
-            <span class="relative z-10 flex items-center gap-1.5">
-              <span class="text-lg animate-bounce">✨</span>
+            <span class="relative z-10 flex items-center" style="gap: 10px;">
+              <span class="text-lg hover-icon-left">✨</span>
               <span class="font-semibold">查看詳細資訊</span>
-              <span class="text-lg animate-bounce delay-150">💕</span>
+              <span class="text-lg hover-icon-right">💕</span>
             </span>
           </button>
         </div>
@@ -307,5 +305,32 @@ onMounted(() => {
 
 .animate-sparkle {
   animation: sparkle 1.5s ease-in-out infinite;
+}
+
+/* 粉黃色系漸層按鈕 */
+.yellow-gradient-button {
+  background: linear-gradient(135deg, #fef3c7, #fde68a, #fcd34d);
+  box-shadow: 0 4px 15px rgba(254, 243, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border: none;
+}
+
+.yellow-gradient-button:hover {
+  background: linear-gradient(135deg, #fde68a, #fcd34d, #fbbf24);
+  box-shadow: 0 6px 20px rgba(254, 243, 199, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Hover 時按鈕浮動動畫 */
+.yellow-gradient-button:hover {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Hover 時 icon 動畫 */
+.yellow-gradient-button:hover .hover-icon-left {
+  animation: bounce 1s infinite;
+}
+
+.yellow-gradient-button:hover .hover-icon-right {
+  animation: bounce 1s infinite;
+  animation-delay: 0.15s;
 }
 </style>
