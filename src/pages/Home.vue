@@ -50,6 +50,21 @@
     <div class="fixed top-20 right-20 text-xl animate-bounce">💫</div>
     <div class="fixed bottom-20 left-20 text-2xl animate-pulse">🌸</div>
     <div class="fixed bottom-10 right-10 text-xl animate-bounce">✨</div>
+
+    <!-- 版本資訊 -->
+    <footer class="text-center py-6 px-4 bg-white/50 backdrop-blur-sm border-t border-gray-200 mt-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center justify-center mb-3">
+          <span class="text-lg mr-2">🎉</span>
+          <p class="text-sm text-gray-600 font-medium">
+            員工卡片系統 v{{ VERSION_INFO.version }}
+          </p>
+        </div>
+        <p class="text-xs text-gray-500 mb-3">
+          最後更新：{{ VERSION_INFO.lastUpdate }} | 建置日期：{{ VERSION_INFO.buildDate }}
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -60,6 +75,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import EmployeeCard from '../components/EmployeeCard.vue'
 import type { Employee } from '../data/employees'
 import { createGoogleSheetsService, defaultGoogleSheetsConfig } from '../services/googleSheets'
+import { VERSION_INFO } from '../config/version'
 
 const cardsContainer = ref<HTMLElement>()
 const employees = ref<Employee[]>([])
