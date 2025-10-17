@@ -13,9 +13,27 @@
 
     <!-- 員工卡片網格 -->
     <main class="container mx-auto px-4 pb-12">
+      <!-- 載入狀態 -->
+      <div v-if="isLoading" class="flex justify-center items-center py-20">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+          <p class="text-gray-600">載入員工資料中...</p>
+        </div>
+      </div>
+
+      <!-- 錯誤訊息 -->
+      <div v-else-if="error" class="text-center py-8">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
+          <p class="text-yellow-800">{{ error }}</p>
+        </div>
+      </div>
+
+      <!-- 員工卡片 -->
       <div 
+        v-else
         ref="cardsContainer"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto"
+        style="gap: 10px;"
       >
         <EmployeeCard
           v-for="(employee, index) in employees"
@@ -40,40 +58,79 @@ import { ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import EmployeeCard from '../components/EmployeeCard.vue'
-import { employees } from '../data/employees'
+import type { Employee } from '../data/employees'
+import { createGoogleSheetsService, defaultGoogleSheetsConfig } from '../services/googleSheets'
 
 const cardsContainer = ref<HTMLElement>()
+const employees = ref<Employee[]>([])
+const isLoading = ref(true)
+const error = ref<string | null>(null)
 
-onMounted(() => {
+// Google Sheets 配置
+const sheetsConfig = {
+  // 請替換為您的 Google Sheets ID
+  spreadsheetId: '1yfnfScBaWhpXhWdpNEcOSPA77SDwJjHqxFfpsmx-4aY',
+  // 請替換為您的資料範圍（修正格式）
+  range: '工作表1!A1:H100',
+  // 可選：如果您有 Google API Key
+  apiKey: 'AIzaSyDdqkHgjCWaYDVDnj5_hKyiBKFjaCvj1FA'
+}
+
+onMounted(async () => {
   gsap.registerPlugin(ScrollTrigger)
   
-  if (cardsContainer.value) {
-    // 為每個卡片設置滾動動畫
-    const cards = cardsContainer.value.querySelectorAll('.employee-card')
+  try {
+    // 嘗試從 Google Sheets 獲取資料
+    const sheetsService = createGoogleSheetsService(sheetsConfig)
+    const fetchedEmployees = await sheetsService.fetchEmployees()
     
-    cards.forEach((card, index) => {
-      gsap.fromTo(card, 
-        { 
-          opacity: 0, 
-          y: 100,
-          scale: 0.8
-        },
-        { 
-          opacity: 1, 
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          delay: index * 0.1,
-          ease: "back.out(1.7)",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      )
-    })
+    if (fetchedEmployees.length > 0) {
+      employees.value = fetchedEmployees
+    } else {
+      // 如果 Google Sheets 沒有資料，使用預設資料
+      const { employees: defaultEmployees } = await import('../data/employees')
+      employees.value = defaultEmployees
+    }
+  } catch (err) {
+    console.warn('無法從 Google Sheets 獲取資料，使用預設資料:', err)
+    // 使用預設資料作為備案
+    const { employees: defaultEmployees } = await import('../data/employees')
+    employees.value = defaultEmployees
+    error.value = '無法連接到 Google Sheets，顯示預設資料'
+  } finally {
+    isLoading.value = false
+    
+    // 等待 DOM 更新後執行動畫
+    setTimeout(() => {
+      if (cardsContainer.value) {
+        // 為每個卡片設置滾動動畫
+        const cards = cardsContainer.value.querySelectorAll('.employee-card')
+        
+        cards.forEach((card, index) => {
+          gsap.fromTo(card, 
+            { 
+              opacity: 0, 
+              y: 100,
+              scale: 0.8
+            },
+            { 
+              opacity: 1, 
+              y: 0,
+              scale: 1,
+              duration: 0.8,
+              delay: index * 0.1,
+              ease: "back.out(1.7)",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+              }
+            }
+          )
+        })
+      }
+    }, 100)
   }
 })
 </script>

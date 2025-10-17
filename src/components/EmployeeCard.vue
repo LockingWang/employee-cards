@@ -1,7 +1,7 @@
 <template>
   <div 
     ref="cardRef"
-    class="employee-card group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+    class="employee-card group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl rounded-2xl overflow-hidden"
     @click="toggleFlip"
   >
     <div 
@@ -10,7 +10,8 @@
     >
       <!-- 正面 -->
       <div class="card-front absolute inset-0 w-full h-full backface-hidden">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 h-full flex flex-col items-center justify-center text-center shadow-lg hover:shadow-xl transition-all duration-300">
+        <div class="bg-white rounded-xl p-8 h-full flex flex-col items-center justify-center text-center shadow-lg hover:shadow-xl transition-all duration-300"
+        style="padding: 16px;">
           <!-- 頭像 -->
           <div class="relative mb-4">
             <img 
@@ -18,6 +19,7 @@
               :alt="employee.name"
               class="w-20 h-20 rounded-full object-cover border-4 border-pink-200 shadow-md group-hover:animate-bounce cursor-pointer"
               @click.stop="showDetailCard"
+              @error="handleImageError"
             />
           </div>
           
@@ -58,22 +60,10 @@
       
       <!-- 背面 - 詳細資訊卡 -->
       <div class="card-back absolute inset-0 w-full h-full backface-hidden transform rotate-y-180">
-        <div class="bg-gradient-to-br from-pink-100 to-mint-100 rounded-2xl p-6 h-full flex flex-col shadow-lg overflow-y-auto">
-          <!-- 返回按鈕 -->
-          <button 
-            @click.stop="toggleFlip"
-            class="absolute top-4 right-4 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 z-10 group"
-          >
-            <X class="w-4 h-4 text-gray-600 group-hover:text-red-500 transition-colors duration-200" />
-          </button>
-          
+        <div class="card-back-bg rounded-xl p-8 h-full flex flex-col shadow-lg overflow-y-auto"
+        style="padding: 16px; gap: 10px;">
           <!-- 詳細資訊 -->
           <div class="flex flex-col items-center text-center mb-6">
-            <img 
-              :src="employee.avatar" 
-              :alt="employee.name"
-              class="w-16 h-16 rounded-full object-cover border-4 border-white shadow-md mb-3"
-            />
             <h3 class="text-xl font-bold text-gray-800 mb-1 font-nunito">{{ employee.name }}</h3>
             <p class="text-pink-600 font-medium text-sm mb-4">{{ employee.title }}</p>
           </div>
@@ -81,7 +71,7 @@
           <!-- 喜歡的東西 -->
           <div v-if="employee.likes && employee.likes.length" class="mb-4">
             <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <Heart class="w-4 h-4 mr-1 text-red-500" />
+              <Heart class="w-4 h-4 mr-1 text-red-500" style="margin-right: 10px;" />
               喜歡的東西
             </h4>
             <div class="flex flex-wrap gap-2 justify-center">
@@ -98,7 +88,7 @@
           <!-- 害怕的東西 -->
           <div v-if="employee.fears && employee.fears.length" class="mb-4">
             <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <AlertTriangle class="w-4 h-4 mr-1 text-orange-500" />
+              <AlertTriangle class="w-4 h-4 mr-1 text-orange-500" style="margin-right: 10px;" />
               害怕的東西
             </h4>
             <div class="flex flex-wrap gap-2 justify-center">
@@ -115,7 +105,7 @@
           <!-- 不吃的東西 -->
           <div v-if="employee.dislikes && employee.dislikes.length" class="mb-4">
             <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <XCircle class="w-4 h-4 mr-1 text-gray-500" />
+              <XCircle class="w-4 h-4 mr-1 text-gray-500" style="margin-right: 10px;" />
               不吃的東西
             </h4>
             <div class="flex flex-wrap gap-2 justify-center">
@@ -132,7 +122,7 @@
           <!-- 興趣愛好 -->
           <div v-if="employee.hobbies && employee.hobbies.length" class="mb-4">
             <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <Star class="w-4 h-4 mr-1 text-yellow-500" />
+              <Star class="w-4 h-4 mr-1 text-yellow-500" style="margin-right: 10px;" />
               興趣愛好
             </h4>
             <div class="flex flex-wrap gap-2 justify-center">
@@ -145,27 +135,6 @@
               </span>
             </div>
           </div>
-          
-          <!-- Email -->
-          <div v-if="employee.email" class="mb-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-1 flex items-center justify-center">
-              <Mail class="w-4 h-4 mr-1 text-blue-500" />
-              聯絡方式
-            </h4>
-            <a 
-              :href="`mailto:${employee.email}`"
-              class="text-blue-600 hover:text-blue-700 text-sm transition-colors duration-200"
-            >
-              {{ employee.email }}
-            </a>
-          </div>
-          
-          <!-- 可愛裝飾 -->
-          <div class="flex justify-center space-x-2 text-2xl mt-auto">
-            <span>✨</span>
-            <span>💕</span>
-            <span>✨</span>
-          </div>
         </div>
       </div>
     </div>
@@ -174,7 +143,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { X, Heart, AlertTriangle, XCircle, Star, Mail } from 'lucide-vue-next'
+import { X, Heart, AlertTriangle, XCircle, Star } from 'lucide-vue-next'
 import { gsap } from 'gsap'
 import type { Employee } from '../data/employees'
 
@@ -193,6 +162,28 @@ const toggleFlip = () => {
 
 const showDetailCard = () => {
   isFlipped.value = true
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  // 使用預設頭像
+  img.src = getDefaultAvatar()
+}
+
+const getDefaultAvatar = () => {
+  // 使用不同的隨機頭像
+  const avatars = [
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face'
+  ]
+  const randomIndex = Math.floor(Math.random() * avatars.length)
+  return avatars[randomIndex]
 }
 
 onMounted(() => {
@@ -220,6 +211,13 @@ onMounted(() => {
 .employee-card {
   perspective: 1000px;
   height: 400px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+}
+
+.card-back-bg {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
 }
 
 .card-inner {
