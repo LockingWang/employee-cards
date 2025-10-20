@@ -34,6 +34,31 @@ export class GoogleSheetsService {
   }
 
   /**
+   * 從 Google Sheets 獲取彈幕資料
+   */
+  async fetchDanmaku(): Promise<string[]> {
+    try {
+      const danmakuConfig = {
+        ...this.config,
+        range: '彈幕!A:A'
+      }
+      
+      const url = this.buildApiUrlForRange(danmakuConfig)
+      const response = await fetch(url)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      return this.parseDanmakuData(data)
+    } catch (error) {
+      console.error('Error fetching danmaku from Google Sheets:', error)
+      throw error
+    }
+  }
+
+  /**
    * 構建 Google Sheets API URL
    */
   private buildApiUrl(): string {
@@ -47,6 +72,35 @@ export class GoogleSheetsService {
     }
     
     return url
+  }
+
+  /**
+   * 構建指定範圍的 Google Sheets API URL
+   */
+  private buildApiUrlForRange(config: GoogleSheetsConfig): string {
+    const { spreadsheetId, range, apiKey } = config
+    const baseUrl = 'https://sheets.googleapis.com/v4/spreadsheets'
+    
+    let url = `${baseUrl}/${spreadsheetId}/values/${range}`
+    
+    if (apiKey) {
+      url += `?key=${apiKey}`
+    }
+    
+    return url
+  }
+
+  /**
+   * 解析彈幕資料
+   */
+  private parseDanmakuData(data: any): string[] {
+    if (!data.values || !Array.isArray(data.values)) {
+      return []
+    }
+    
+    return data.values
+      .map((row: any[]) => row[0]) // 取 A 欄位的值
+      .filter((text: string) => text && text.trim() !== '') // 過濾空值
   }
 
   /**

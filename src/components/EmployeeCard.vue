@@ -1,11 +1,11 @@
 <template>
   <div 
     ref="cardRef"
-    class="employee-card group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl rounded-2xl overflow-hidden"
+    class="employee-card"
     @click="toggleFlip"
   >
     <div 
-      class="card-inner relative w-full h-full"
+      class="card-inner"
       :class="{ 'is-flipped': isFlipped }"
     >
       <!-- 正面 -->
@@ -216,9 +216,13 @@ onMounted(() => {
 .employee-card {
   perspective: 1000px;
   height: 400px;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
-  border-radius: 16px;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.employee-card:hover {
+  transform: scale(1.05);
 }
 
 /* 卡片正面樣式 */
@@ -232,8 +236,8 @@ onMounted(() => {
 }
 
 .card-front-content {
-  background: white;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #fefbf3, #fef3c7);
+  border-radius: 16px;
   padding: 16px;
   height: 100%;
   display: flex;
@@ -486,8 +490,8 @@ onMounted(() => {
 }
 
 .card-back-content {
-  background: linear-gradient(135deg, #fef7ed, #fed7aa);
-  border-radius: 12px;
+  background: linear-gradient(135deg, #fefbf3, #fef3c7);
+  border-radius: 16px;
   padding: 16px;
   height: 100%;
   display: flex;
