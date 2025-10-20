@@ -9,77 +9,81 @@
       :class="{ 'is-flipped': isFlipped }"
     >
       <!-- 正面 -->
-      <div class="card-front absolute inset-0 w-full h-full backface-hidden">
-        <div class="bg-white rounded-xl p-8 h-full flex flex-col items-center justify-center text-center shadow-lg hover:shadow-xl transition-all duration-300"
-        style="padding: 16px;">
-          <!-- 頭像 -->
-          <div class="relative mb-4 w-20 h-20 rounded-full overflow-hidden border-4 border-pink-200 shadow-md group-hover:animate-bounce cursor-pointer"
-               @click.stop="showDetailCard">
-            <img 
-              :src="employee.avatar" 
-              :alt="employee.name"
-              class="w-full h-full object-cover object-center"
-              style="aspect-ratio: 1/1;"
-              @error="handleImageError"
-            />
+      <div class="card-front">
+        <div class="card-front-content">
+          <!-- 頭像區域 - 固定高度 -->
+          <div class="avatar-section">
+            <div class="avatar-container" @click.stop="showDetailCard">
+              <img 
+                :src="employee.avatar" 
+                :alt="employee.name"
+                class="avatar-image"
+                @error="handleImageError"
+              />
+            </div>
           </div>
           
-          <!-- 姓名和職稱 -->
-          <h3 class="text-xl font-bold text-gray-800 mb-1 font-nunito">{{ employee.name }}</h3>
-          <p class="text-pink-600 font-medium text-sm mb-3">{{ employee.title }}</p>
+          <!-- 姓名和職稱區域 - 固定高度 -->
+          <div class="name-section">
+            <h3 class="employee-name">{{ employee.name }}</h3>
+            <p class="employee-title">{{ employee.title }}</p>
+          </div>
           
-          <!-- 簡介 -->
-          <p class="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
-            {{ employee.description }}
-          </p>
+          <!-- 簡介區域 - 固定高度，可滾動 -->
+          <div class="description-section">
+            <p class="employee-description">
+              {{ employee.description }}
+            </p>
+          </div>
           
-          <!-- 展開按鈕 -->
-          <button class="w-4/5 mx-2 yellow-gradient-button text-white px-6 py-5 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl flex items-center justify-center relative overflow-hidden group"
-          :style="{ padding: '10px 0px' }">
-            <!-- 可愛的裝飾背景 -->
-            <div class="absolute inset-0 bg-gradient-to-r from-yellow-200/30 to-orange-200/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            <!-- 閃爍的星星裝飾 -->
-            <div class="absolute top-1 left-3 w-1.5 h-1.5 bg-white/50 rounded-full animate-sparkle"></div>
-            <div class="absolute top-1 right-4 w-1 h-1 bg-white/50 rounded-full animate-sparkle delay-300"></div>
-            <div class="absolute bottom-1 left-4 w-1 h-1 bg-white/50 rounded-full animate-sparkle delay-700"></div>
-            <div class="absolute bottom-1 right-2 w-1.5 h-1.5 bg-white/50 rounded-full animate-sparkle delay-500"></div>
-            
-            <!-- 可愛的邊框裝飾 -->
-            <div class="absolute -top-0.5 -left-0.5 w-4 h-4 bg-white/30 rounded-full animate-pulse"></div>
-            <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white/30 rounded-full animate-pulse delay-150"></div>
-            
-            <!-- 按鈕內容 -->
-            <span class="relative z-10 flex items-center" style="gap: 10px;">
-              <span class="text-lg hover-icon-left">✨</span>
-              <span class="font-semibold">查看詳細資訊</span>
-              <span class="text-lg hover-icon-right">💕</span>
-            </span>
-          </button>
+          <!-- 展開按鈕區域 - 固定高度 -->
+          <div class="button-section">
+            <button class="detail-button">
+              <!-- 可愛的裝飾背景 -->
+              <div class="button-decoration"></div>
+              
+              <!-- 閃爍的星星裝飾 -->
+              <div class="sparkle sparkle-1"></div>
+              <div class="sparkle sparkle-2"></div>
+              <div class="sparkle sparkle-3"></div>
+              <div class="sparkle sparkle-4"></div>
+              
+              <!-- 可愛的邊框裝飾 -->
+              <div class="corner-decoration corner-1"></div>
+              <div class="corner-decoration corner-2"></div>
+              
+              <!-- 按鈕內容 -->
+              <span class="button-content">
+                <span class="button-icon-left">✨</span>
+                <span class="button-text">查看詳細資訊</span>
+                <span class="button-icon-right">💕</span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
       
       <!-- 背面 - 詳細資訊卡 -->
-      <div class="card-back absolute inset-0 w-full h-full backface-hidden transform rotate-y-180">
-        <div class="card-back-bg rounded-xl p-8 h-full flex flex-col shadow-lg overflow-y-auto"
-        style="padding: 16px; gap: 10px;">
+      <div class="card-back">
+        <div class="card-back-content">
           <!-- 詳細資訊 -->
-          <div class="flex flex-col items-center text-center mb-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-1 font-nunito">{{ employee.name }}</h3>
-            <p class="text-pink-600 font-medium text-sm mb-4">{{ employee.title }}</p>
+          <div class="back-header">
+            <h3 class="back-name">{{ employee.name }}</h3>
+            <p class="back-title">{{ employee.title }}</p>
+            <p class="back-description">{{ employee.description }}</p>
           </div>
           
           <!-- 喜歡的東西 -->
-          <div v-if="employee.likes && employee.likes.length" class="mb-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <Heart class="w-4 h-4 mr-1 text-red-500" style="margin-right: 10px;" />
+          <div v-if="employee.likes && employee.likes.length" class="info-section">
+            <h4 class="section-title">
+              <Heart class="section-icon section-icon-red" />
               喜歡的東西
             </h4>
-            <div class="flex flex-wrap gap-2 justify-center">
+            <div class="tags-container">
               <span 
                 v-for="like in employee.likes" 
                 :key="like"
-                class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium"
+                class="tag tag-red"
               >
                 {{ like }}
               </span>
@@ -87,16 +91,16 @@
           </div>
           
           <!-- 害怕的東西 -->
-          <div v-if="employee.fears && employee.fears.length" class="mb-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <AlertTriangle class="w-4 h-4 mr-1 text-orange-500" style="margin-right: 10px;" />
+          <div v-if="employee.fears && employee.fears.length" class="info-section">
+            <h4 class="section-title">
+              <AlertTriangle class="section-icon section-icon-orange" />
               害怕的東西
             </h4>
-            <div class="flex flex-wrap gap-2 justify-center">
+            <div class="tags-container">
               <span 
                 v-for="fear in employee.fears" 
                 :key="fear"
-                class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium"
+                class="tag tag-orange"
               >
                 {{ fear }}
               </span>
@@ -104,16 +108,16 @@
           </div>
           
           <!-- 不吃的東西 -->
-          <div v-if="employee.dislikes && employee.dislikes.length" class="mb-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <XCircle class="w-4 h-4 mr-1 text-gray-500" style="margin-right: 10px;" />
+          <div v-if="employee.dislikes && employee.dislikes.length" class="info-section">
+            <h4 class="section-title">
+              <XCircle class="section-icon section-icon-gray" />
               不吃的東西
             </h4>
-            <div class="flex flex-wrap gap-2 justify-center">
+            <div class="tags-container">
               <span 
                 v-for="dislike in employee.dislikes" 
                 :key="dislike"
-                class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
+                class="tag tag-gray"
               >
                 {{ dislike }}
               </span>
@@ -121,16 +125,16 @@
           </div>
           
           <!-- 興趣愛好 -->
-          <div v-if="employee.hobbies && employee.hobbies.length" class="mb-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <Star class="w-4 h-4 mr-1 text-yellow-500" style="margin-right: 10px;" />
+          <div v-if="employee.hobbies && employee.hobbies.length" class="info-section">
+            <h4 class="section-title">
+              <Star class="section-icon section-icon-yellow" />
               興趣愛好
             </h4>
-            <div class="flex flex-wrap gap-2 justify-center">
+            <div class="tags-container">
               <span 
                 v-for="hobby in employee.hobbies" 
                 :key="hobby"
-                class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium"
+                class="tag tag-yellow"
               >
                 {{ hobby }}
               </span>
@@ -217,8 +221,384 @@ onMounted(() => {
   border-radius: 16px;
 }
 
-.card-back-bg {
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+/* 卡片正面樣式 */
+.card-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.card-front-content {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.card-front-content:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 頭像區域 */
+.avatar-section {
+  flex-shrink: 0;
+  margin-top: 20px;
+  margin-bottom: 16px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fce7f3;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.avatar-container:hover {
+  animation: bounce 1s infinite;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  aspect-ratio: 1/1;
+}
+
+/* 姓名和職稱區域 */
+.name-section {
+  flex-shrink: 0;
+  margin-bottom: 12px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.employee-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  font-family: 'Nunito', sans-serif;
+}
+
+.employee-title {
+  color: #db2777;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* 簡介區域 */
+.description-section {
+  flex-shrink: 0;
+  margin-bottom: 12px;
+  height: 50px;
+  overflow: hidden;
+}
+
+.employee-description {
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 按鈕區域 */
+.button-section {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-button {
+  width: 80%;
+  margin: 0 8px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a, #fcd34d);
+  color: white;
+  padding: 10px 0;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.detail-button:hover {
+  background: linear-gradient(135deg, #fde68a, #fcd34d, #fbbf24);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(1.05);
+  animation: float 2s ease-in-out infinite;
+}
+
+/* 按鈕裝飾 */
+.button-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.3), rgba(253, 230, 138, 0.3));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.detail-button:hover .button-decoration {
+  opacity: 1;
+}
+
+/* 閃爍星星裝飾 */
+.sparkle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.sparkle-1 {
+  top: 4px;
+  left: 12px;
+  width: 6px;
+  height: 6px;
+}
+
+.sparkle-2 {
+  top: 4px;
+  right: 16px;
+  width: 4px;
+  height: 4px;
+  animation-delay: 0.3s;
+}
+
+.sparkle-3 {
+  bottom: 4px;
+  left: 16px;
+  width: 4px;
+  height: 4px;
+  animation-delay: 0.7s;
+}
+
+.sparkle-4 {
+  bottom: 4px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  animation-delay: 0.5s;
+}
+
+/* 邊框裝飾 */
+.corner-decoration {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.corner-1 {
+  top: -2px;
+  left: -2px;
+  width: 16px;
+  height: 16px;
+}
+
+.corner-2 {
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  animation-delay: 0.15s;
+}
+
+/* 按鈕內容 */
+.button-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-text {
+  font-weight: 600;
+}
+
+.button-icon-left,
+.button-icon-right {
+  font-size: 1.125rem;
+}
+
+.detail-button:hover .button-icon-left {
+  animation: bounce 1s infinite;
+}
+
+.detail-button:hover .button-icon-right {
+  animation: bounce 1s infinite;
+  animation-delay: 0.15s;
+}
+
+/* 卡片背面樣式 */
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.card-back-content {
+  background: linear-gradient(135deg, #fef7ed, #fed7aa);
+  border-radius: 12px;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  gap: 10px;
+}
+
+/* 背面標題區域 */
+.back-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.back-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  font-family: 'Nunito', sans-serif;
+}
+
+.back-title {
+  color: #db2777;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin: 0 0 12px 0;
+}
+
+.back-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+/* 資訊區塊 */
+.info-section {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.section-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.section-icon-red {
+  color: #ef4444;
+}
+
+.section-icon-orange {
+  color: #f97316;
+}
+
+.section-icon-gray {
+  color: #6b7280;
+}
+
+.section-icon-yellow {
+  color: #eab308;
+}
+
+/* 標籤容器 */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* 標籤樣式 */
+.tag {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tag-red {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.tag-orange {
+  background-color: #fed7aa;
+  color: #ea580c;
+}
+
+.tag-gray {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.tag-yellow {
+  background-color: #fef3c7;
+  color: #d97706;
 }
 
 .card-inner {
@@ -232,30 +612,6 @@ onMounted(() => {
 
 .card-inner.is-flipped {
   transform: rotateY(180deg);
-}
-
-.card-front,
-.card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
-}
-
-.rotate-y-180 {
-  transform: rotateY(180deg);
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* 自定義動畫 */
@@ -306,30 +662,4 @@ onMounted(() => {
   animation: sparkle 1.5s ease-in-out infinite;
 }
 
-/* 粉黃色系漸層按鈕 */
-.yellow-gradient-button {
-  background: linear-gradient(135deg, #fef3c7, #fde68a, #fcd34d);
-  box-shadow: 0 4px 15px rgba(254, 243, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border: none;
-}
-
-.yellow-gradient-button:hover {
-  background: linear-gradient(135deg, #fde68a, #fcd34d, #fbbf24);
-  box-shadow: 0 6px 20px rgba(254, 243, 199, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-/* Hover 時按鈕浮動動畫 */
-.yellow-gradient-button:hover {
-  animation: float 2s ease-in-out infinite;
-}
-
-/* Hover 時 icon 動畫 */
-.yellow-gradient-button:hover .hover-icon-left {
-  animation: bounce 1s infinite;
-}
-
-.yellow-gradient-button:hover .hover-icon-right {
-  animation: bounce 1s infinite;
-  animation-delay: 0.15s;
-}
 </style>
