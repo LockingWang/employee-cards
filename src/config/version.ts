@@ -1,7 +1,7 @@
 // 應用程式版本資訊
 export const APP_VERSION = '1.0.1'
 export const BUILD_DATE = '2025-10-16'
-export const LAST_UPDATE = '2025-10-17'
+export const LAST_UPDATE = '2025-10-20'
 
 // 版本資訊
 export const VERSION_INFO = {
