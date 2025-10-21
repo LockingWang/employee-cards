@@ -1,10 +1,10 @@
 <script setup>
-import Home from './pages/Home.vue'
+// App.vue 現在使用路由，不需要直接導入頁面組件
 </script>
 
 <template>
   <div id="app">
-    <Home />
+    <router-view />
   </div>
 </template>
 

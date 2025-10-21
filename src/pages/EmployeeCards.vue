@@ -1,7 +1,18 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <!-- 返回按鈕 -->
+    <div class="container mx-auto px-4 pt-6">
+      <button 
+        @click="goBack"
+        class="back-button group"
+      >
+        <ArrowLeft class="w-5 h-5 mr-2" />
+        返回首頁
+      </button>
+    </div>
+
     <!-- 網站標題 -->
-    <header class="text-center py-12 px-4">
+    <header class="text-center py-8 px-4">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 font-nunito">
         我們的可愛夥伴們 
         <span class="text-5xl">🩷</span>
@@ -105,18 +116,25 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ArrowLeft } from 'lucide-vue-next'
 import EmployeeCard from '../components/EmployeeCard.vue'
 import type { Employee } from '../data/employees'
 import { createGoogleSheetsService, defaultGoogleSheetsConfig, type DanmakuItem } from '../services/googleSheets'
 import { VERSION_INFO } from '../config/version'
 
+const router = useRouter()
 const cardsContainer = ref<HTMLElement>()
 const employees = ref<Employee[]>([])
 const danmakuItems = ref<DanmakuItem[]>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
+
+const goBack = () => {
+  router.push('/')
+}
 
 // 開啟 Google Sheets 編輯頁面
 const openGoogleSheets = () => {
@@ -228,6 +246,36 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 返回按鈕樣式 */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.back-button:hover {
+  background: linear-gradient(135deg, #fde68a, #fcd34d);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.15);
+}
+
+.back-button:hover svg {
+  transform: translateX(-4px);
+}
+
+.back-button svg {
+  transition: transform 0.3s ease;
+}
+
 /* 確保卡片容器有適當的間距 */
 .container {
   max-width: 1200px;
