@@ -6,6 +6,12 @@ export interface GoogleSheetsConfig {
   apiKey?: string
 }
 
+export interface DanmakuItem {
+  text: string
+  color: string
+  fontSize: number
+}
+
 export class GoogleSheetsService {
   private config: GoogleSheetsConfig
 
@@ -36,11 +42,11 @@ export class GoogleSheetsService {
   /**
    * 從 Google Sheets 獲取彈幕資料
    */
-  async fetchDanmaku(): Promise<string[]> {
+  async fetchDanmaku(): Promise<DanmakuItem[]> {
     try {
       const danmakuConfig = {
         ...this.config,
-        range: '彈幕!A:A'
+        range: '彈幕!A2:C'
       }
       
       const url = this.buildApiUrlForRange(danmakuConfig)
@@ -93,14 +99,24 @@ export class GoogleSheetsService {
   /**
    * 解析彈幕資料
    */
-  private parseDanmakuData(data: any): string[] {
+  private parseDanmakuData(data: any): DanmakuItem[] {
     if (!data.values || !Array.isArray(data.values)) {
       return []
     }
     
     return data.values
-      .map((row: any[]) => row[0]) // 取 A 欄位的值
-      .filter((text: string) => text && text.trim() !== '') // 過濾空值
+      .map((row: any[]) => {
+        const text = row[0] || ''
+        const color = row[1] || '#000000' // 預設黑色
+        const fontSize = row[2] ? parseInt(row[2]) : 24 // 預設24px
+        
+        return {
+          text: text.trim(),
+          color: color.trim(),
+          fontSize: fontSize
+        }
+      })
+      .filter((item: DanmakuItem) => item.text !== '') // 過濾空文字
   }
 
   /**

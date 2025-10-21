@@ -57,9 +57,14 @@
         v-for="(item, index) in danmakuItems" 
         :key="index"
         :class="`danmaku-item danmaku-${(index % 9) + 1}`"
-        :style="`top: ${(index * 10) + 10}%; animation-delay: ${index * 2}s;`"
+        :style="{
+          top: `${(index * 10) + 10}%`,
+          animationDelay: `${index * 2}s`,
+          color: item.color,
+          fontSize: `${item.fontSize}px`
+        }"
       >
-        {{ item }}
+        {{ item.text }}
       </div>
     </div>
 
@@ -104,12 +109,12 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import EmployeeCard from '../components/EmployeeCard.vue'
 import type { Employee } from '../data/employees'
-import { createGoogleSheetsService, defaultGoogleSheetsConfig } from '../services/googleSheets'
+import { createGoogleSheetsService, defaultGoogleSheetsConfig, type DanmakuItem } from '../services/googleSheets'
 import { VERSION_INFO } from '../config/version'
 
 const cardsContainer = ref<HTMLElement>()
 const employees = ref<Employee[]>([])
-const danmakuItems = ref<string[]>([])
+const danmakuItems = ref<DanmakuItem[]>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 
@@ -156,15 +161,15 @@ onMounted(async () => {
     } else {
       // 如果 Google Sheets 沒有彈幕資料，使用預設彈幕
       danmakuItems.value = [
-        'John !!!',
-        '貴哥~',
-        '交給Cursor',
-        '蔡喬',
-        '麥味登',
-        '小蔡',
-        '享受晨間',
-        '品味生活',
-        '西式早午餐'
+        { text: 'John !!!', color: '#000000', fontSize: 24 },
+        { text: '貴哥~', color: '#000000', fontSize: 24 },
+        { text: '交給Cursor', color: '#000000', fontSize: 24 },
+        { text: '蔡喬', color: '#000000', fontSize: 24 },
+        { text: '麥味登', color: '#000000', fontSize: 24 },
+        { text: '小蔡', color: '#000000', fontSize: 24 },
+        { text: '享受晨間', color: '#000000', fontSize: 24 },
+        { text: '品味生活', color: '#000000', fontSize: 24 },
+        { text: '西式早午餐', color: '#000000', fontSize: 24 }
       ]
     }
   } catch (err) {
@@ -173,15 +178,15 @@ onMounted(async () => {
     const { employees: defaultEmployees } = await import('../data/employees')
     employees.value = defaultEmployees
     danmakuItems.value = [
-      'John !!!',
-      '貴哥~',
-      '交給Cursor',
-      '蔡喬',
-      '麥味登',
-      '小蔡',
-      '享受晨間',
-      '品味生活',
-      '西式早午餐'
+      { text: 'John !!!', color: '#000000', fontSize: 24 },
+      { text: '貴哥~', color: '#000000', fontSize: 24 },
+      { text: '交給Cursor', color: '#000000', fontSize: 24 },
+      { text: '蔡喬', color: '#000000', fontSize: 24 },
+      { text: '麥味登', color: '#000000', fontSize: 24 },
+      { text: '小蔡', color: '#000000', fontSize: 24 },
+      { text: '享受晨間', color: '#000000', fontSize: 24 },
+      { text: '品味生活', color: '#000000', fontSize: 24 },
+      { text: '西式早午餐', color: '#000000', fontSize: 24 }
     ]
     error.value = '無法連接到 Google Sheets，顯示預設資料'
   } finally {
@@ -269,58 +274,46 @@ onMounted(async () => {
 .danmaku-item {
   position: absolute;
   left: -200px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.5rem;
   font-weight: 600;
   white-space: nowrap;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  animation: danmaku-move 15s linear infinite;
 }
 
 /* 不同彈幕的不同動畫效果 */
 .danmaku-1 {
   animation: danmaku-move-1 18s ease-in-out infinite;
-  color: rgba(255, 107, 107, 0.9);
 }
 
 .danmaku-2 {
   animation: danmaku-move-2 16s ease-out infinite;
-  color: rgba(107, 255, 107, 0.9);
 }
 
 .danmaku-3 {
   animation: danmaku-move-3 20s ease-in-out infinite;
-  color: rgba(107, 107, 255, 0.9);
 }
 
 .danmaku-4 {
   animation: danmaku-move-4 14s ease-out infinite;
-  color: rgba(255, 255, 107, 0.9);
 }
 
 .danmaku-5 {
   animation: danmaku-move-5 22s ease-in-out infinite;
-  color: rgba(255, 107, 255, 0.9);
 }
 
 .danmaku-6 {
   animation: danmaku-move-6 17s ease-out infinite;
-  color: rgba(107, 255, 255, 0.9);
 }
 
 .danmaku-7 {
   animation: danmaku-move-7 19s ease-in-out infinite;
-  color: rgba(255, 165, 0, 0.9);
 }
 
 .danmaku-8 {
   animation: danmaku-move-8 21s ease-out infinite;
-  color: rgba(255, 192, 203, 0.9);
 }
 
 .danmaku-9 {
   animation: danmaku-move-9 15s ease-in-out infinite;
-  color: rgba(144, 238, 144, 0.9);
 }
 
 /* 各種不同的移動動畫 */
