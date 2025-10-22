@@ -184,16 +184,17 @@ onMounted(() => {
 /* 三角形容器 */
 .triangle-container {
   position: relative;
-  width: 450px;
-  height: 390px;
+  width: 200px;
+  height: 400px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 
 /* 功能按鈕基礎樣式 */
 .feature-button {
-  position: absolute;
+  position: relative;
   width: 180px;
   height: 100px;
   background: linear-gradient(135deg, #ffffff, #f8fafc);
@@ -206,7 +207,7 @@ onMounted(() => {
   flex-direction: column;
   justify-content: space-between;
   border: 2px solid rgba(255, 255, 255, 0.8);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .feature-button:hover {
@@ -217,44 +218,37 @@ onMounted(() => {
 
 /* 員工資料卡 - 頂部 */
 .employees-button {
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   background: linear-gradient(135deg, #fdf2f8, #fce7f3);
   border-color: #f9a8d4;
 }
 
 .employees-button:hover {
-  transform: translateX(-50%) translateY(-10px) scale(1.05);
+  transform: translateY(-10px) scale(1.05);
   box-shadow: 0 15px 30px rgba(249, 168, 212, 0.3);
 }
 
-/* 記帳小幫手 - 左下 */
+/* 記帳小幫手 - 中間 */
 .accounting-button {
-  bottom: 0;
-  left: 0;
   background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   border-color: #86efac;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .accounting-button:hover {
-  transform: translate(-50px, -30px) scale(0.8);
+  transform: translateY(-10px) scale(0.95);
   box-shadow: 0 5px 15px rgba(134, 239, 172, 0.2);
   opacity: 0.7;
 }
 
-/* 午餐專家 - 右下 */
+/* 午餐專家 - 底部 */
 .lunch-button {
-  bottom: 0;
-  right: 0;
   background: linear-gradient(135deg, #fffbeb, #fef3c7);
   border-color: #fcd34d;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .lunch-button:hover {
-  transform: translate(50px, -30px) scale(0.8);
+  transform: translateY(-10px) scale(0.95);
   box-shadow: 0 5px 15px rgba(252, 211, 77, 0.2);
   opacity: 0.7;
 }
@@ -446,13 +440,13 @@ onMounted(() => {
   
   .triangle-container {
     width: 100%;
-    height: 320px;
-    max-width: 350px;
+    height: 350px;
+    max-width: 200px;
   }
   
   .feature-button {
-    width: 140px;
-    height: 85px;
+    width: 160px;
+    height: 90px;
     padding: 12px;
   }
   
@@ -472,12 +466,12 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .triangle-container {
-    height: 280px;
+    height: 320px;
   }
   
   .feature-button {
-    width: 120px;
-    height: 75px;
+    width: 140px;
+    height: 80px;
     padding: 10px;
   }
   
