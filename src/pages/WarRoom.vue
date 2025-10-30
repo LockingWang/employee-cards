@@ -49,56 +49,157 @@
       </div>
 
       <!-- 監控設定 -->
+      <!-- 控制面板 -->
       <div class="section-card">
-        <div class="section-header">
-          <h2 class="section-title">
-            <Settings class="icon-md icon-blue" />
-            監控設定
-          </h2>
-          <div class="button-group">
+        <h3 class="section-title">⚙️ 監控控制</h3>
+        
+        <!-- 主要控制按鈕 -->
+        <div class="control-group">
+          <label class="control-label">主要功能</label>
+          <div class="control-row">
             <button 
               @click="toggleAutoRefresh"
-              :class="['toggle-button', autoRefresh ? 'toggle-active' : 'toggle-inactive']"
+              :class="['control-btn', 'primary-btn', autoRefresh ? 'active' : '']"
             >
               <RefreshCw :class="['icon-sm', autoRefresh && 'spin-animation']" />
-              {{ autoRefresh ? '自動刷新中' : '手動模式' }}
-            </button>
-            <button 
-              @click="toggleSound"
-              :class="['toggle-button', soundEnabled ? 'toggle-active' : 'toggle-inactive']"
-              :title="soundEnabled ? '點擊關閉錯誤提示音' : '點擊開啟錯誤提示音'"
-            >
-              <Volume2 v-if="soundEnabled" class="icon-sm" />
-              <VolumeX v-else class="icon-sm" />
-              {{ soundEnabled ? '音效開啟' : '音效關閉' }}
+              {{ autoRefresh ? '停止自動監控' : '開始自動監控' }}
             </button>
             <button 
               @click="checkAllServers"
               :disabled="isChecking"
-              class="check-button"
+              class="control-btn secondary-btn"
             >
-              <Activity class="icon-sm" />
-              立即檢查
-            </button>
-            <button 
-              @click="testWriteLog"
-              class="test-log-button"
-              title="測試寫入 LOG 到 Google Sheets"
-            >
-              <Server class="icon-sm" />
-              測試 LOG
-            </button>
-            <button 
-              @click="openLogSheet"
-              class="open-log-button"
-              title="在新視窗開啟 Google Sheets LOG"
-            >
-              <ExternalLink class="icon-sm" />
-              前往 LOG
+              <Activity :class="['icon-sm', isChecking && 'spin-animation']" />
+              {{ isChecking ? '檢查中...' : '立即檢查' }}
             </button>
           </div>
         </div>
         
+        <!-- 音效控制 -->
+        <div class="control-group">
+          <label class="control-label">音效控制</label>
+          <div class="control-row">
+            <button 
+              @click="toggleSound"
+              :class="['control-btn', soundEnabled ? 'success-btn' : 'inactive-btn']"
+            >
+              <Volume2 v-if="soundEnabled" class="icon-sm" />
+              <VolumeX v-else class="icon-sm" />
+              {{ soundEnabled ? '音效已開啟' : '音效已關閉' }}
+            </button>
+            <button 
+              @click="testSound"
+              class="control-btn info-btn"
+              :disabled="!soundEnabled"
+            >
+              <Volume2 class="icon-sm" />
+              測試音效
+            </button>
+            <button 
+              @click="soundSettingsExpanded = !soundSettingsExpanded"
+              class="control-btn info-btn"
+            >
+              <component :is="soundSettingsExpanded ? ChevronUp : ChevronDown" class="icon-sm" />
+              {{ soundSettingsExpanded ? '收合設定' : '音效設定' }}
+            </button>
+          </div>
+        </div>
+        
+        <!-- LOG 管理 -->
+        <div class="control-group">
+          <label class="control-label">LOG 管理</label>
+          <div class="control-row">
+            <button 
+              @click="openLogSheet"
+              class="control-btn success-btn"
+            >
+              <ExternalLink class="icon-sm" />
+              前往 LOG
+            </button>
+            <button 
+              @click="testWriteLog"
+              class="control-btn warning-btn"
+            >
+              <Server class="icon-sm" />
+              測試 LOG
+            </button>
+          </div>
+        </div>
+      </div>
+        
+      <!-- 音效設定區塊（可收合） -->
+      <div v-if="soundSettingsExpanded" class="section-card collapsible-section">
+        <h3 class="section-title">🔊 音效設定</h3>
+        
+        <!-- 音效類型選擇 -->
+        <div class="sound-type-grid">
+            <button 
+              @click="soundType = 'voice'"
+              :class="['sound-type-card', soundType === 'voice' ? 'active' : '']"
+              title="使用語音合成朗讀錯誤訊息"
+            >
+              <div class="sound-icon">🎤</div>
+              <div class="sound-name">人聲提示</div>
+            </button>
+            <button 
+              @click="soundType = 'ding'"
+              :class="['sound-type-card', soundType === 'ding' ? 'active' : '']"
+              title="清脆的叮咚兩聲"
+            >
+              <div class="sound-icon">🔔</div>
+              <div class="sound-name">叮咚聲</div>
+            </button>
+            <button 
+              @click="soundType = 'alarm'"
+              :class="['sound-type-card', soundType === 'alarm' ? 'active' : '']"
+              title="連續警報音"
+            >
+              <div class="sound-icon">🚨</div>
+              <div class="sound-name">警報聲</div>
+            </button>
+            <button 
+              @click="soundType = 'notification'"
+              :class="['sound-type-card', soundType === 'notification' ? 'active' : '']"
+              title="柔和通知音"
+            >
+              <div class="sound-icon">📢</div>
+              <div class="sound-name">通知聲</div>
+            </button>
+            <button 
+              @click="soundType = 'error'"
+              :class="['sound-type-card', soundType === 'error' ? 'active' : '']"
+              title="錯誤蜂鳴音"
+            >
+              <div class="sound-icon">⚠️</div>
+              <div class="sound-name">錯誤蜂鳴</div>
+            </button>
+            <button 
+              @click="soundType = 'emergency'"
+              :class="['sound-type-card', soundType === 'emergency' ? 'active' : '']"
+              title="緊急警報音"
+            >
+              <div class="sound-icon">🆘</div>
+              <div class="sound-name">緊急警報</div>
+            </button>
+          </div>
+          
+          <!-- 人聲訊息編輯 -->
+          <div v-if="soundType === 'voice'" class="voice-message-editor">
+            <label class="form-label">人聲提示內容</label>
+            <input 
+              v-model="customVoiceMessage"
+              type="text"
+              class="form-input"
+              placeholder="輸入自訂的錯誤提示訊息"
+              maxlength="100"
+            />
+            <span class="form-hint">此訊息將在 API 錯誤時透過語音播報</span>
+          </div>
+      </div>
+        
+      <!-- 刷新設定 -->
+      <div class="section-card">
+        <h3 class="section-title">⏱️ 刷新設定</h3>
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">
@@ -106,11 +207,14 @@
             </label>
             <input 
               v-model.number="refreshInterval"
+              @input="validateRefreshInterval"
+              @blur="enforceRefreshInterval"
               type="number"
-              min="5"
+              min="3"
               max="300"
               class="form-input"
             />
+            <span class="form-hint">最小 3 秒，建議設定 10 秒以上避免過度請求</span>
           </div>
           <div class="form-group">
             <label class="form-label">
@@ -118,12 +222,15 @@
             </label>
             <input 
               v-model.number="timeout"
+              @input="validateTimeout"
+              @blur="enforceTimeout"
               type="number"
-              min="1000"
+              min="3000"
               max="30000"
               step="1000"
               class="form-input"
             />
+            <span class="form-hint">建議設定 3 秒以上</span>
           </div>
         </div>
       </div>
@@ -225,8 +332,8 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
-  ArrowLeft, Settings, RefreshCw, Activity, Server, 
-  Clock, Trash2, ExternalLink, Volume2, VolumeX
+  ArrowLeft, RefreshCw, Activity, Server, 
+  Clock, Trash2, ExternalLink, Volume2, VolumeX, ChevronUp, ChevronDown
 } from 'lucide-vue-next'
 import { createGoogleSheetsService, defaultGoogleSheetsConfig, type ApiLog } from '../services/googleSheets'
 
@@ -286,12 +393,21 @@ const servers = ref<ServerStatus[]>([
   }
 ])
 
-const autoRefresh = ref(true)
-const refreshInterval = ref(30) // 秒
-const timeout = ref(5000) // 毫秒
+const autoRefresh = ref(false) // 預設關閉自動刷新
+const refreshInterval = ref(30) // 秒（最小 10 秒）
+const timeout = ref(5000) // 毫秒（最小 3000 毫秒）
 const isChecking = ref(false)
 const soundEnabled = ref(true) // 音效開關
+const soundType = ref<'voice' | 'ding' | 'alarm' | 'notification' | 'error' | 'emergency'>('voice') // 音效類型
+const customVoiceMessage = ref('API 發生錯誤') // 自訂人聲訊息
+const soundSettingsExpanded = ref(false) // 音效設定是否展開
 let intervalId: number | null = null
+
+// 常數定義
+const MIN_REFRESH_INTERVAL = 3 // 最小刷新間隔（秒）
+const MAX_REFRESH_INTERVAL = 300 // 最大刷新間隔（秒）
+const MIN_TIMEOUT = 3000 // 最小超時時間（毫秒）
+const MAX_TIMEOUT = 30000 // 最大超時時間（毫秒）
 
 // 計算屬性
 const onlineCount = computed(() => 
@@ -407,6 +523,12 @@ const checkServer = async (server: ServerStatus) => {
 }
 
 const checkAllServers = async () => {
+  // 檢查刷新間隔是否符合最小要求
+  if (refreshInterval.value < MIN_REFRESH_INTERVAL) {
+    alert(`⚠️ 刷新間隔不能小於 ${MIN_REFRESH_INTERVAL} 秒\n請調整後再執行檢查`)
+    return
+  }
+  
   isChecking.value = true
   await Promise.all(servers.value.map(server => checkServer(server)))
   isChecking.value = false
@@ -421,6 +543,12 @@ const removeServer = (id: number) => {
 const toggleAutoRefresh = () => {
   autoRefresh.value = !autoRefresh.value
   if (autoRefresh.value) {
+    // 檢查刷新間隔是否符合最小要求
+    if (refreshInterval.value < MIN_REFRESH_INTERVAL) {
+      alert(`⚠️ 刷新間隔不能小於 ${MIN_REFRESH_INTERVAL} 秒\n請調整後再啟動自動監控`)
+      autoRefresh.value = false
+      return
+    }
     startAutoRefresh()
   } else {
     stopAutoRefresh()
@@ -429,13 +557,77 @@ const toggleAutoRefresh = () => {
 
 const toggleSound = () => {
   soundEnabled.value = !soundEnabled.value
-  // 測試播放一次提示音
-  if (soundEnabled.value) {
+}
+
+/**
+ * 測試音效
+ */
+const testSound = () => {
+  if (!soundEnabled.value) {
+    alert('⚠️ 音效已關閉，請先開啟音效開關')
+    return
+  }
+  
+  // 人聲類型使用自訂訊息
+  if (soundType.value === 'voice') {
+    playErrorSound(customVoiceMessage.value || '測試語音提示，系統正常運作中')
+  } else {
     playErrorSound()
   }
 }
 
+/**
+ * 驗證刷新間隔
+ */
+const validateRefreshInterval = () => {
+  if (refreshInterval.value < MIN_REFRESH_INTERVAL) {
+    console.warn(`刷新間隔過短，建議設定 ${MIN_REFRESH_INTERVAL} 秒以上`)
+  }
+}
+
+/**
+ * 強制執行刷新間隔限制
+ */
+const enforceRefreshInterval = () => {
+  if (refreshInterval.value < MIN_REFRESH_INTERVAL) {
+    alert(`⚠️ 刷新間隔不能小於 ${MIN_REFRESH_INTERVAL} 秒\n過短的間隔可能導致過度請求，已自動調整為 ${MIN_REFRESH_INTERVAL} 秒`)
+    refreshInterval.value = MIN_REFRESH_INTERVAL
+  } else if (refreshInterval.value > MAX_REFRESH_INTERVAL) {
+    alert(`⚠️ 刷新間隔不能超過 ${MAX_REFRESH_INTERVAL} 秒\n已自動調整為 ${MAX_REFRESH_INTERVAL} 秒`)
+    refreshInterval.value = MAX_REFRESH_INTERVAL
+  }
+}
+
+/**
+ * 驗證超時時間
+ */
+const validateTimeout = () => {
+  if (timeout.value < MIN_TIMEOUT) {
+    console.warn(`超時時間過短，建議設定 ${MIN_TIMEOUT / 1000} 秒以上`)
+  }
+}
+
+/**
+ * 強制執行超時時間限制
+ */
+const enforceTimeout = () => {
+  if (timeout.value < MIN_TIMEOUT) {
+    alert(`⚠️ 超時時間不能小於 ${MIN_TIMEOUT} 毫秒（${MIN_TIMEOUT / 1000} 秒）\n過短的超時時間可能導致誤判，已自動調整為 ${MIN_TIMEOUT} 毫秒`)
+    timeout.value = MIN_TIMEOUT
+  } else if (timeout.value > MAX_TIMEOUT) {
+    alert(`⚠️ 超時時間不能超過 ${MAX_TIMEOUT} 毫秒（${MAX_TIMEOUT / 1000} 秒）\n已自動調整為 ${MAX_TIMEOUT} 毫秒`)
+    timeout.value = MAX_TIMEOUT
+  }
+}
+
 const startAutoRefresh = () => {
+  // 檢查刷新間隔是否符合最小要求
+  if (refreshInterval.value < MIN_REFRESH_INTERVAL) {
+    alert(`⚠️ 刷新間隔不能小於 ${MIN_REFRESH_INTERVAL} 秒\n請調整後再啟動自動監控`)
+    autoRefresh.value = false
+    return
+  }
+  
   stopAutoRefresh()
   intervalId = window.setInterval(() => {
     checkAllServers()
@@ -477,13 +669,272 @@ const formatTime = (date: Date | null) => {
 }
 
 /**
- * 播放錯誤提示音
+ * 播放錯誤提示音（根據選擇的類型）
  */
-const playErrorSound = () => {
+const playErrorSound = (message: string = '') => {
   if (!soundEnabled.value) return
   
   try {
-    // 使用 Web Audio API 生成簡單的提示音
+    // 根據選擇的音效類型播放不同音效
+    switch (soundType.value) {
+      case 'voice':
+        // 使用自訂訊息或預設訊息
+        const voiceMsg = message || customVoiceMessage.value || 'API 發生錯誤'
+        playVoiceSound(voiceMsg)
+        break
+      case 'ding':
+        playDingSound()
+        break
+      case 'alarm':
+        playAlarmSound()
+        break
+      case 'notification':
+        playNotificationSound()
+        break
+      case 'error':
+        playErrorBeepSound()
+        break
+      case 'emergency':
+        playEmergencySound()
+        break
+      default:
+        playVoiceSound(message || customVoiceMessage.value)
+    }
+  } catch (error) {
+    console.error('播放音效失敗:', error)
+  }
+}
+
+/**
+ * 播放語音提示
+ */
+const playVoiceSound = (message: string) => {
+  try {
+    // 檢查瀏覽器是否支援語音合成
+    if (!window.speechSynthesis) {
+      console.warn('瀏覽器不支援語音合成')
+      playBeepSound() // 降級為嗶嗶聲
+      return
+    }
+    
+    // 取消所有正在播放的語音
+    window.speechSynthesis.cancel()
+    
+    // 創建語音合成物件
+    const utterance = new SpeechSynthesisUtterance(message)
+    
+    // 設定語音參數
+    utterance.lang = 'zh-TW' // 繁體中文
+    utterance.rate = 1.2 // 語速（0.1 - 10，預設 1）
+    utterance.pitch = 1 // 音調（0 - 2，預設 1）
+    utterance.volume = 0.8 // 音量（0 - 1，預設 1）
+    
+    // 播放語音
+    window.speechSynthesis.speak(utterance)
+    
+  } catch (error) {
+    console.error('播放語音失敗:', error)
+    playBeepSound() // 降級為嗶嗶聲
+  }
+}
+
+/**
+ * 播放警報聲 🚨
+ */
+const playAlarmSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const masterGain = audioContext.createGain()
+    masterGain.connect(audioContext.destination)
+    masterGain.gain.value = 0.3
+    
+    // 連續三次警報音
+    for (let i = 0; i < 3; i++) {
+      const startTime = audioContext.currentTime + i * 0.25
+      
+      const osc = audioContext.createOscillator()
+      const gain = audioContext.createGain()
+      osc.connect(gain)
+      gain.connect(masterGain)
+      
+      osc.type = 'sawtooth'
+      // 從高到低的警報音
+      osc.frequency.setValueAtTime(1200, startTime)
+      osc.frequency.exponentialRampToValueAtTime(800, startTime + 0.2)
+      
+      gain.gain.setValueAtTime(0.8, startTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2)
+      
+      osc.start(startTime)
+      osc.stop(startTime + 0.2)
+    }
+    
+    setTimeout(() => audioContext.close(), 1000)
+  } catch (error) {
+    console.error('播放警報音效失敗:', error)
+  }
+}
+
+/**
+ * 播放通知聲 📢
+ */
+const playNotificationSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const masterGain = audioContext.createGain()
+    masterGain.connect(audioContext.destination)
+    masterGain.gain.value = 0.25
+    
+    // 柔和的三音階通知音
+    const frequencies = [523.25, 659.25, 783.99] // C5, E5, G5
+    
+    frequencies.forEach((freq, i) => {
+      const startTime = audioContext.currentTime + i * 0.15
+      
+      const osc = audioContext.createOscillator()
+      const gain = audioContext.createGain()
+      osc.connect(gain)
+      gain.connect(masterGain)
+      
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      
+      gain.gain.setValueAtTime(0.6, startTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3)
+      
+      osc.start(startTime)
+      osc.stop(startTime + 0.3)
+    })
+    
+    setTimeout(() => audioContext.close(), 800)
+  } catch (error) {
+    console.error('播放通知音效失敗:', error)
+  }
+}
+
+/**
+ * 播放錯誤蜂鳴 ⚠️
+ */
+const playErrorBeepSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const masterGain = audioContext.createGain()
+    masterGain.connect(audioContext.destination)
+    masterGain.gain.value = 0.3
+    
+    // 低沉的錯誤蜂鳴音（兩次）
+    for (let i = 0; i < 2; i++) {
+      const startTime = audioContext.currentTime + i * 0.3
+      
+      const osc = audioContext.createOscillator()
+      const gain = audioContext.createGain()
+      osc.connect(gain)
+      gain.connect(masterGain)
+      
+      osc.type = 'square'
+      osc.frequency.value = 200 // 低頻蜂鳴
+      
+      gain.gain.setValueAtTime(0.7, startTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.25)
+      
+      osc.start(startTime)
+      osc.stop(startTime + 0.25)
+    }
+    
+    setTimeout(() => audioContext.close(), 800)
+  } catch (error) {
+    console.error('播放錯誤蜂鳴失敗:', error)
+  }
+}
+
+/**
+ * 播放緊急警報 🆘
+ */
+const playEmergencySound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const masterGain = audioContext.createGain()
+    masterGain.connect(audioContext.destination)
+    masterGain.gain.value = 0.35
+    
+    // 快速交替的高低音警報
+    for (let i = 0; i < 6; i++) {
+      const startTime = audioContext.currentTime + i * 0.15
+      const freq = i % 2 === 0 ? 1400 : 1000 // 交替高低音
+      
+      const osc = audioContext.createOscillator()
+      const gain = audioContext.createGain()
+      osc.connect(gain)
+      gain.connect(masterGain)
+      
+      osc.type = 'square'
+      osc.frequency.value = freq
+      
+      gain.gain.setValueAtTime(0.8, startTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.12)
+      
+      osc.start(startTime)
+      osc.stop(startTime + 0.12)
+    }
+    
+    setTimeout(() => audioContext.close(), 1200)
+  } catch (error) {
+    console.error('播放緊急警報失敗:', error)
+  }
+}
+
+/**
+ * 播放叮咚聲
+ */
+const playDingSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const masterGain = audioContext.createGain()
+    masterGain.connect(audioContext.destination)
+    masterGain.gain.value = 0.3
+    
+    // 第一聲 "叮" - 高音
+    const osc1 = audioContext.createOscillator()
+    const gain1 = audioContext.createGain()
+    osc1.connect(gain1)
+    gain1.connect(masterGain)
+    
+    osc1.type = 'sine'
+    osc1.frequency.value = 1000 // E6
+    gain1.gain.setValueAtTime(1, audioContext.currentTime)
+    gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3)
+    
+    osc1.start(audioContext.currentTime)
+    osc1.stop(audioContext.currentTime + 0.3)
+    
+    // 第二聲 "咚" - 低音
+    const osc2 = audioContext.createOscillator()
+    const gain2 = audioContext.createGain()
+    osc2.connect(gain2)
+    gain2.connect(masterGain)
+    
+    osc2.type = 'sine'
+    osc2.frequency.value = 800 // C6
+    gain2.gain.setValueAtTime(1, audioContext.currentTime + 0.15)
+    gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+    
+    osc2.start(audioContext.currentTime + 0.15)
+    osc2.stop(audioContext.currentTime + 0.5)
+    
+    // 清理資源
+    setTimeout(() => {
+      audioContext.close()
+    }, 700)
+  } catch (error) {
+    console.error('播放叮咚音效失敗:', error)
+  }
+}
+
+/**
+ * 播放嗶嗶聲（備用方案）
+ */
+const playBeepSound = () => {
+  try {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
     const oscillator = audioContext.createOscillator()
     const gainNode = audioContext.createGain()
@@ -535,8 +986,33 @@ const writeErrorLog = (server: ServerStatus, httpStatus: number | undefined, err
     errorMessage: errorMessage
   }
   
-  // 播放錯誤提示音
-  playErrorSound()
+  // 播放錯誤提示音（語音版本）
+  // 根據不同錯誤類型播放不同訊息
+  let voiceMessage = `${server.name} 發生錯誤`
+  
+  if (httpStatus) {
+    if (httpStatus === 504) {
+      voiceMessage = `${server.name} 閘道超時`
+    } else if (httpStatus === 500) {
+      voiceMessage = `${server.name} 伺服器錯誤`
+    } else if (httpStatus === 503) {
+      voiceMessage = `${server.name} 服務無法使用`
+    } else if (httpStatus === 404) {
+      voiceMessage = `${server.name} 找不到資源`
+    } else if (httpStatus === 403) {
+      voiceMessage = `${server.name} 拒絕存取`
+    } else if (httpStatus >= 400) {
+      voiceMessage = `${server.name} 請求錯誤 ${httpStatus}`
+    }
+  } else if (errorMessage.includes('timeout') || errorMessage.includes('超時')) {
+    voiceMessage = `${server.name} 連線超時`
+  } else if (errorMessage.includes('Network') || errorMessage.includes('網路')) {
+    voiceMessage = `${server.name} 網路錯誤`
+  } else if (errorMessage.includes('CORS')) {
+    voiceMessage = `${server.name} 跨域錯誤`
+  }
+  
+  playErrorSound(voiceMessage)
   
   // 非同步寫入 LOG，不影響主流程
   googleSheetsService.writeApiLog(log).catch(err => {
@@ -929,6 +1405,248 @@ onUnmounted(() => {
   background: #059669;
 }
 
+.test-sound-button {
+  background: #f59e0b;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.test-sound-button:hover {
+  background: #d97706;
+}
+
+/* 控制組 */
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.control-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  flex: 0 1 auto;
+  min-width: 160px;
+  max-width: 280px;
+  padding: 0.875rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.control-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.control-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 按鈕樣式 */
+.primary-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.primary-btn.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.primary-btn.active:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.success-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.success-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.info-btn {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+}
+
+.info-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+}
+
+.warning-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.warning-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+.inactive-btn {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.inactive-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+/* 可收合區塊動畫 */
+.collapsible-section {
+  animation: slideDown 0.3s ease;
+}
+
+/* 音效類型選擇網格 */
+.sound-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sound-type-card {
+  padding: 1.25rem 1rem;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sound-type-card:hover {
+  border-color: #94a3b8;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.sound-type-card.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  transform: translateY(-4px);
+}
+
+.sound-type-card.active .sound-icon {
+  transform: scale(1.2);
+}
+
+.sound-type-card.active .sound-name {
+  color: white;
+  font-weight: 700;
+}
+
+.sound-icon {
+  font-size: 2.5rem;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.sound-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* 人聲訊息編輯器 */
+.voice-message-editor {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: #f0f9ff;
+  border-radius: 0.75rem;
+  border: 2px solid #bfdbfe;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.voice-message-editor .form-label {
+  color: #1e40af;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.voice-message-editor .form-input {
+  border-color: #93c5fd;
+  background: white;
+}
+
+.voice-message-editor .form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.voice-message-editor .form-hint {
+  color: #3b82f6;
+}
+
 .spin-animation {
   animation: spin 1s linear infinite;
 }
@@ -974,6 +1692,13 @@ onUnmounted(() => {
 .form-input:focus {
   outline: none;
   border-color: #3b82f6;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
 }
 
 /* 伺服器列表 */
@@ -1297,10 +2022,25 @@ onUnmounted(() => {
     gap: 0.5rem;
   }
   
+  .sound-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .control-btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+    max-width: none;
+  }
+  
+  .control-row {
+    flex-direction: column;
+  }
+  
   .toggle-button,
   .check-button,
   .test-log-button,
-  .open-log-button {
+  .open-log-button,
+  .test-sound-button {
     width: 100%;
     justify-content: center;
   }
