@@ -3,6 +3,7 @@ import HomePage from '../pages/HomePage.vue'
 import EmployeeCards from '../pages/EmployeeCards.vue'
 import AccountingHelper from '../pages/AccountingHelper.vue'
 import LunchExpert from '../pages/LunchExpert.vue'
+import WarRoom from '../pages/WarRoom.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/lunch',
     name: 'LunchExpert',
     component: LunchExpert
+  },
+  {
+    path: '/warroom',
+    name: 'WarRoom',
+    component: WarRoom
   }
 ]
 

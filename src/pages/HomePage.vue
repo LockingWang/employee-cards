@@ -11,10 +11,10 @@
       </p>
     </header>
 
-    <!-- 三角形按鈕佈局 -->
+    <!-- 2x2 按鈕佈局 -->
     <main class="main-content">
-      <div class="triangle-container">
-        <!-- 員工資料卡 - 頂部 -->
+      <div class="button-grid">
+        <!-- 員工資料卡 - 左上 -->
         <div 
           class="feature-button employees-button"
           @click="navigateTo('/employees')"
@@ -25,6 +25,23 @@
           <div class="button-content">
             <h3 class="button-title">員工資料卡</h3>
             <p class="button-description">認識我們充滿活力的團隊成員</p>
+          </div>
+          <div class="button-arrow">
+            <ArrowRight class="arrow-icon" />
+          </div>
+        </div>
+
+        <!-- 戰情室 - 右上 -->
+        <div 
+          class="feature-button warroom-button"
+          @click="navigateTo('/warroom')"
+        >
+          <div class="button-icon">
+            <Activity class="icon" />
+          </div>
+          <div class="button-content">
+            <h3 class="button-title">戰情室</h3>
+            <p class="button-description">即時監控伺服器狀態</p>
           </div>
           <div class="button-arrow">
             <ArrowRight class="arrow-icon" />
@@ -94,7 +111,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { gsap } from 'gsap'
-import { Users, Calculator, Utensils, ArrowRight } from 'lucide-vue-next'
+import { Users, Calculator, Utensils, Activity, ArrowRight } from 'lucide-vue-next'
 import { VERSION_INFO } from '../config/version'
 
 const router = useRouter()
@@ -181,25 +198,23 @@ onMounted(() => {
   z-index: 10;
 }
 
-/* 三角形容器 */
-.triangle-container {
-  position: relative;
-  width: 200px;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+/* 2x2 網格容器 */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* 功能按鈕基礎樣式 */
 .feature-button {
   position: relative;
-  width: 180px;
-  height: 100px;
+  width: 100%;
+  min-height: 200px;
   background: linear-gradient(135deg, #ffffff, #f8fafc);
   border-radius: 20px;
-  padding: 15px;
+  padding: 24px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -240,7 +255,18 @@ onMounted(() => {
   opacity: 0.7;
 }
 
-/* 午餐專家 - 底部 */
+/* 戰情室 - 右上 */
+.warroom-button {
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  border-color: #94a3b8;
+}
+
+.warroom-button:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(148, 163, 184, 0.3);
+}
+
+/* 午餐專家 - 右下 */
 .lunch-button {
   background: linear-gradient(135deg, #fffbeb, #fef3c7);
   border-color: #fcd34d;
@@ -288,8 +314,8 @@ onMounted(() => {
 }
 
 .icon {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   color: #6b7280;
 }
 
@@ -301,19 +327,19 @@ onMounted(() => {
 }
 
 .button-title {
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #374151;
-  margin: 0 0 4px 0;
+  margin: 0 0 8px 0;
   font-family: 'Nunito', sans-serif;
   line-height: 1.2;
 }
 
 .button-description {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: #6b7280;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -438,24 +464,23 @@ onMounted(() => {
     font-size: 1.1rem;
   }
   
-  .triangle-container {
-    width: 100%;
-    height: 350px;
-    max-width: 200px;
+  .button-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    max-width: 400px;
   }
   
   .feature-button {
-    width: 160px;
-    height: 90px;
-    padding: 12px;
+    min-height: 150px;
+    padding: 20px;
   }
   
   .button-title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
   
   .button-description {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
   
   .icon {
@@ -465,14 +490,9 @@ onMounted(() => {
 }
 
 @media (max-width: 480px) {
-  .triangle-container {
-    height: 320px;
-  }
-  
   .feature-button {
-    width: 140px;
-    height: 80px;
-    padding: 10px;
+    min-height: 140px;
+    padding: 16px;
   }
   
   .main-title {

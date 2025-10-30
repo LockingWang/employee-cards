@@ -4,6 +4,18 @@ export interface GoogleSheetsConfig {
   spreadsheetId: string
   range: string
   apiKey?: string
+  webAppUrl?: string // 用於寫入 LOG 的 Web App URL
+}
+
+export interface ApiLog {
+  timestamp: string
+  apiName: string
+  method: string
+  url: string
+  status: 'success' | 'error'
+  httpStatus?: number
+  responseTime?: number
+  errorMessage?: string
 }
 
 export interface DanmakuItem {
@@ -36,6 +48,40 @@ export class GoogleSheetsService {
     } catch (error) {
       console.error('Error fetching data from Google Sheets:', error)
       throw error
+    }
+  }
+
+  /**
+   * 寫入 API 監控 LOG 到 Google Sheets
+   */
+  async writeApiLog(log: ApiLog): Promise<void> {
+    if (!this.config.webAppUrl) {
+      console.warn('Web App URL 未設定，無法寫入 LOG')
+      return
+    }
+
+    try {
+      await fetch(this.config.webAppUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'writeLog',
+          timestamp: log.timestamp,
+          apiName: log.apiName,
+          method: log.method,
+          url: log.url,
+          status: log.status,
+          httpStatus: log.httpStatus || '',
+          responseTime: log.responseTime || '',
+          errorMessage: log.errorMessage || ''
+        })
+      })
+    } catch (error) {
+      console.error('Error writing API log to Google Sheets:', error)
+      // 不拋出錯誤，避免影響主要功能
     }
   }
 
@@ -234,5 +280,7 @@ export const defaultGoogleSheetsConfig: GoogleSheetsConfig = {
   // 替換為您的資料範圍
   range: 'Sheet1!A:H',
   // 可選：如果您有 Google API Key
-  apiKey: 'AIzaSyDdqkHgjCWaYDVDnj5_hKyiBKFjaCvj1FA'
+  apiKey: 'AIzaSyDdqkHgjCWaYDVDnj5_hKyiBKFjaCvj1FA',
+  // 可選：如果要寫入 API LOG，需要設定 Web App URL
+  webAppUrl: 'https://script.google.com/macros/s/AKfycbym43Qi7NUdtcQXoF3XKBH-Md2ut5JcCl4B2lBH3HpO0l5eC7Mfv8xJ9eyD3uFcg8PCrA/exec'
 }
