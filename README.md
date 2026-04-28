@@ -1,159 +1,161 @@
-# Employee Cards — Static Team Directory
+<p align="center">
+  <img src="docs/assets/readme-hero.svg" alt="Employee Cards — 多功能工具集" width="720"/>
+</p>
 
-**A responsive, interactive static site that displays team member profile cards with a friendly, modern UI.**
+<p align="center">
+  <a href="https://vuejs.org/"><img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vuedotjs" alt="Vue 3"/></a>
+  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-build-646cff?style=flat-square&logo=vite" alt="Vite"/></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-CSS-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind"/></a>
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT"/>
+</p>
 
-|  |  |
-|--|--|
-| **Stack** | Vue 3, Vite, Tailwind CSS, PrimeVue, GSAP |
-| **Type** | Front-end only (static, deployable anywhere) |
-
-**Live demo:** [https://lockingwang.github.io/employee-cards/](https://lockingwang.github.io/employee-cards/)
-
----
-
-## Overview
-
-This project is a **static team directory** that presents 8 employee profiles as flip cards. It focuses on:
-
-- **Clear UI/UX**: Consistent layout, hover/click feedback, and responsive grid
-- **Modern front-end**: Vue 3 Composition API, Vite, Tailwind CSS
-- **Polished interactions**: GSAP animations and card flip behavior
-- **Maintainability**: Centralized data; reusable `EmployeeCard` component
-- **Data source**: Employee data can be loaded from **Google Sheets** (via Sheets API or published CSV); falls back to local `employees.ts` when Sheets is unavailable
-
-Suitable for portfolios and as a discussion piece in front-end interviews (e.g. component design, state, animations, responsive layout).
+<p align="center">
+  <strong>線上預覽 →</strong>
+  <a href="https://lockingwang.github.io/employee-cards/">https://lockingwang.github.io/employee-cards/</a>
+</p>
 
 ---
 
-## Tech Stack
+## 這是什麼專案？
 
-| Category | Choice | Notes |
-|----------|--------|--------|
-| **Framework** | Vue 3 (Composition API) | Component-based, `<script setup>` |
-| **Build** | Vite | Fast dev server and production build |
-| **Styling** | Tailwind CSS | Utility-first, responsive breakpoints |
-| **Components** | PrimeVue | Pre-built UI where needed |
-| **Animation** | GSAP | Staggered entrance and card flip |
-| **Icons** | Lucide Icons | Lightweight, consistent icon set |
-| **Fonts** | Google Fonts (Nunito, Poppins) | Readable, friendly typography |
-| **Data** | Google Sheets (optional) | Employee data from a spreadsheet; fallback to `employees.ts` |
+以 **Vue 3 + Vite** 建置的**純前端靜態 SPA**，對外名稱為多功能「工具集」：**首頁為功能入口**，核心亮點為 **員工資料卡**（翻轉卡片、動畫、Google 試算表資料），並含 **戰情室**（伺服器監控）、以及 **記帳／午餐**等頁面原型（首頁入口標示「即將推出」並暫時鎖定）。
 
----
-
-## Features
-
-- **Flip cards**: Click avatar or card to reveal detailed info (likes, fears, dietary, hobbies, email).
-- **Responsive grid**: 1 column (mobile), 2 (tablet), 3–4 (desktop).
-- **Animations**: Fade-in, scale on hover, flip on click; GSAP for entrance/stagger.
-- **Design**: Soft pink/cream/mint palette; rounded avatars and clear typography.
-- **Static & portable**: No backend; can be deployed to GitHub Pages, Netlify, Vercel, or any static host.
-- **Google Sheets**: Optional data source—configure a spreadsheet ID and range to load employee data from Google Sheets; otherwise uses local `employees.ts`.
+```mermaid
+flowchart LR
+  subgraph pages [路由頁面]
+    H["/ 首頁<br/>HomePage"]
+    E["/employees<br/>員工資料卡"]
+    W["/warroom<br/>戰情室"]
+    A["/accounting<br/>記帳小幫手"]
+    L["/lunch<br/>午餐專家"]
+  end
+  H --> E
+  H --> W
+  H -.->|"入口暫鎖"| A
+  H -.->|"入口暫鎖"| L
+```
 
 ---
 
-## Project Structure
+## 畫面與功能導覽
+
+### 視覺示意（功能模組）
+
+<p align="center">
+  <img src="docs/assets/feature-map.svg" alt="功能模組：員工卡、戰情室、記帳、午餐" width="640"/>
+</p>
+
+### 主要模組說明
+
+| 路由 | 說明 | 亮點 |
+|------|------|------|
+| `/` | **首頁**：2×2 功能網格、GSAP 進場動畫、版本資訊 | Lucide 圖示、漸層與裝飾元素 |
+| `/employees` | **員工資料卡**：8 張可翻轉卡片、彈幕 | GSAP、`EmployeeCard`、可選 **Google Sheets** |
+| `/warroom` | **戰情室**：監控面板、自動輪詢、音效提示 | 儀表統計；錯誤 LOG 可寫回試算表（見 `API_LOG_SETUP.md`） |
+| `/accounting` | **記帳小幫手**：收支 UI 原型 | 首頁點擊會提示「即將推出」，仍可直接輸入網址進入頁面 |
+| `/lunch` | **午餐專家**：隨機推薦午餐 | 同上，首頁入口暫鎖 |
+
+### 資料流（員工資料卡）
+
+```mermaid
+sequenceDiagram
+  participant UI as EmployeeCards.vue
+  participant GS as googleSheets.ts
+  participant API as Google Sheets API
+  participant Local as employees.ts
+  UI->>GS: fetchEmployees()
+  GS->>API: HTTP（若已設定環境變數）
+  alt 成功且有資料
+    API-->>GS: 列資料
+    GS-->>UI: Employee[]
+  else 失敗或未設定
+    GS-->>UI: 空／錯誤
+    UI->>Local: fallback 載入預設員工
+  end
+```
+
+---
+
+## 技術棧
+
+| 類別 | 選用 |
+|------|------|
+| 框架 | Vue 3（Composition API，script setup） |
+| 路由 | vue-router |
+| 建置 | Vite（`rolldown-vite`） |
+| 樣式 | Tailwind CSS 4、PostCSS |
+| 動畫 | GSAP（含 ScrollTrigger 等） |
+| 圖示 | Lucide Vue Next、PrimeIcons |
+| UI | PrimeVue（部分頁面） |
+| 字型 | Google Fonts（Nunito、Poppins） |
+| 資料 | 本地 `src/data/employees.ts`；可選 Google Sheets |
+
+---
+
+## 專案結構（精簡）
 
 ```
 src/
 ├── components/
-│   └── EmployeeCard.vue   # Reusable flip card (avatar, front/back content)
+│   └── EmployeeCard.vue      # 員工翻轉卡片
 ├── pages/
-│   └── Home.vue           # Main page, grid layout, employee list
-├── data/
-│   └── employees.ts       # Local fallback employee data
+│   ├── HomePage.vue          # 首頁入口
+│   ├── EmployeeCards.vue     # 員工卡列表 + Sheets 載入
+│   ├── WarRoom.vue           # 戰情室
+│   ├── AccountingHelper.vue  # 記帳原型
+│   └── LunchExpert.vue       # 午餐推薦原型
 ├── services/
-│   └── googleSheets.ts    # Google Sheets API client (fetch employees, danmaku)
-├── assets/                # Images, etc.
+│   └── googleSheets.ts       # Sheets API、彈幕、API LOG 寫入
+├── data/
+│   └── employees.ts          # 預設員工與型別
+├── config/
+│   └── version.ts            # 版本與功能列表
+├── router/
+│   └── index.ts
 ├── App.vue
 ├── main.js
-└── style.css              # Global styles, Tailwind imports
+└── style.css
 ```
 
-See also `GOOGLE_SHEETS_SETUP.md` for configuring the spreadsheet as data source.
-
-Data can come from **Google Sheets** (see `src/services/googleSheets.ts` and `GOOGLE_SHEETS_SETUP.md`) or from local `src/data/employees.ts`; the app falls back to local data if Sheets is not configured or fails. Styling can be tuned via Tailwind config and `EmployeeCard.vue`.
+延伸說明：`GOOGLE_SHEETS_SETUP.md`、`API_LOG_SETUP.md`。
 
 ---
 
-## Getting Started
+## 本機開發
 
-**Prerequisites:** Node.js (e.g. 18+), npm.
+**需求：** Node.js 18+（建議 20）、npm。
 
 ```bash
-# Install dependencies
 npm install
-
-# Run dev server (e.g. http://localhost:5173)
-npm run dev
-
-# Production build
-npm run build
-
-# Preview production build locally
-npm run preview
+npm run dev         # 開發伺服器，預設 http://localhost:5173
+npm run build       # 產出 dist/
+npm run preview     # 預覽正式建置
 ```
 
----
-
-## Design & Implementation Notes
-
-- **Color system**: Primary pink/cream (`#fff5f7`, `#ffe4ec`, `#fef6e4`), accent mint (`#f0fdf4`). Easy to change in `tailwind.config.js` and `style.css`.
-- **Adding an employee**: Either edit the Google Sheet (if using Sheets as data source) or add an object to the array in `src/data/employees.ts` with `id`, `name`, `title`, `avatar`, `description`, `hobbies`, `email`, and any tags (e.g. likes, fears, dietary). See `GOOGLE_SHEETS_SETUP.md` for Sheets setup.
-- **Customization**: Card layout and flip behavior in `EmployeeCard.vue`; grid and spacing in `Home.vue`; theme in `tailwind.config.js` and `src/style.css`.
-
-These points are good to walk through in an interview (data flow, component API, styling approach).
+**生產環境 base path：** `vite.config.js` 於 production 使用 `/employee-cards/`，對應 GitHub Pages 子路徑。
 
 ---
 
-## Deployment
+## 部署與環境變數
 
-Static output after `npm run build` (e.g. `dist/`). Deploy that folder to:
+| 情境 | 做法 |
+|------|------|
+| **本機** | 複製 `.env.example` 為 `.env`，填入 `VITE_GOOGLE_SHEETS_*`（勿提交 `.env`） |
+| **GitHub Pages（Actions 建置）** | 在 Repo → **Settings** → **Secrets and variables** → **Actions** 新增同名 Secrets，workflow 建置時會注入變數 |
+| **其他主機** | 在建置環境設定相同的 `VITE_*` 變數 |
 
-- **GitHub Pages**
-- **Netlify** or **Vercel** (connect repo for automatic deploys)
-- Any static hosting or CDN
+`.gitignore` 已排除 `.env`。若曾在程式碼中暴露 API Key，請至 [Google Cloud Console](https://console.cloud.google.com/apis/credentials) 輪替金鑰並限制用途。
 
-No server or environment variables required for basic use.
+---
+
+## English summary
+
+**Employee Cards** is a Vue 3 + Vite static SPA deployed to GitHub Pages. It includes a **home hub**, **flip employee cards** (GSAP, optional Google Sheets + local fallback), and a **War Room** dashboard for server checks (with optional Sheets logging). Accounting and Lunch routes exist as prototypes; entry from the home grid is temporarily blocked with a “coming soon” alert while direct URLs still work.
+
+**Live demo:** [https://lockingwang.github.io/employee-cards/](https://lockingwang.github.io/employee-cards/)
 
 ---
 
 ## License
 
 MIT License.
-
----
-
-# 中文說明（面試用）
-
-**線上預覽：** [https://lockingwang.github.io/employee-cards/](https://lockingwang.github.io/employee-cards/)
-
-## 專案簡介
-
-本專案是一個**靜態團隊資料卡網站**，以 8 位員工的個人資料卡為例，展示響應式、具互動性的前端實作。
-
-**技術重點：**
-
-- **前端架構**：Vue 3 Composition API、Vite、Tailwind CSS、PrimeVue、GSAP
-- **資料來源**：可選用 **Google 試算表** 作為員工資料來源（透過 Google Sheets API）；未設定或無法連線時會使用本地的 `employees.ts`
-- **互動**：點擊頭像或卡片可翻轉顯示詳細資訊（喜好、害怕的事物、飲食、興趣、Email）
-- **響應式**：手機 1 欄、平板 2 欄、桌機 3–4 欄
-- **設計**：粉色／米色／薄荷綠配色，圓形頭像與清晰排版
-
-## 面試可討論的面向
-
-1. **元件設計**：`EmployeeCard` 如何接收資料、處理翻轉狀態與動畫。
-2. **資料層**：支援從 Google 試算表讀取員工資料，失敗時 fallback 至本地 `employees.ts`；可談串接設計與 `GOOGLE_SHEETS_SETUP.md` 設定流程。
-3. **動畫與體驗**：GSAP 進場動畫與卡片翻轉的實作方式。
-4. **響應式與樣式**：Tailwind 斷點與版面規劃。
-5. **部署**：純靜態建置，可部署至 GitHub Pages、Netlify、Vercel 等。
-
-## 快速開始（中文）
-
-```bash
-npm install
-npm run dev
-```
-
-建置：`npm run build`；預覽建置結果：`npm run preview`。
-
----

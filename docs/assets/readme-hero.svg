@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200" role="img" aria-label="Employee Cards HkE">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff5f7"/>
+      <stop offset="50%" style="stop-color:#fef6e4"/>
+      <stop offset="100%" style="stop-color:#f0fdf4"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f43f5e"/>
+      <stop offset="100%" style="stop-color:#ec4899"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="200" rx="16" fill="url(#bg)"/>
+  <rect x="24" y="24" width="852" height="152" rx="12" fill="none" stroke="url(#accent)" stroke-width="2" opacity="0.35"/>
+  <!-- card icons -->
+  <g transform="translate(56,72)">
+    <rect width="72" height="96" rx="10" fill="#ffe4ec" stroke="#fbcfe8" stroke-width="2"/>
+    <circle cx="36" cy="38" r="22" fill="#fce7f3"/>
+    <rect x="14" y="62" width="44" height="8" rx="4" fill="#fda4af"/>
+    <rect x="18" y="76" width="36" height="6" rx="3" fill="#fecdd3"/>
+  </g>
+  <text x="160" y="92" font-family="system-ui,Segoe UI,sans-serif" font-size="26" font-weight="700" fill="#1f2937">Employee Cards · ύεwΖ</text>
+  <text x="160" y="128" font-family="system-ui,Segoe UI,sans-serif" font-size="15" fill="#6b7280">Vue 3 · GSAP · Tailwind · Google Sheets</text>
+  <!-- decoration -->
+  <text x="760" y="168" font-size="28">=ΰ</text>
+</svg>
